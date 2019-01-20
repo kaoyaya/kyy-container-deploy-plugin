@@ -1,47 +1,40 @@
 package com.kaoyaya.jenkins.cd.cs;
 
 public class Cert {
-    private String Url;
-    private String Ca;
-    private String Cert;
-    private String Key;
+    private String endPoint;
+    private String ca;
+    private String cert;
+    private String key;
 
-    public String getUrl() {
-        return Url;
+    public String getEndPoint() {
+        return endPoint;
     }
 
-    public void setUrl(String url) {
-        Url = url;
+    public void setEndPoint(String endPoint) {
+        this.endPoint = endPoint;
     }
 
     public String getCa() {
-        return Ca;
+        return ca;
     }
 
     public void setCa(String ca) {
-        Ca = ca;
+        this.ca = ca;
     }
 
     public String getCert() {
-        return Cert;
+        return cert;
     }
 
     public void setCert(String cert) {
-        Cert = cert;
+        this.cert = cert;
     }
 
     public String getKey() {
-        return Key;
+        return key;
     }
 
     public void setKey(String key) {
-        Key = key;
-    }
-
-    public Cert(String url, String ca, String cert, String key) {
-        Url = url;
-        Ca = ca;
-        Cert = cert;
-        Key = key;
+        this.key = key;
     }
 }
