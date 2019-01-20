@@ -10,19 +10,16 @@
     When submitted, it will be passed to the corresponding constructor parameter.
   -->
 
-  <f:entry title="MasterURL" field="masterurl">
-    <f:textbox value="${it.masterurl}"/>
+  <f:entry title="EndPoint" field="endPoint">
+    <f:textbox value="${it.endPoint}"/>
   </f:entry>
   <f:entry title="ApplicationName" field="appName">
     <f:textbox value="${it.appName}"/>
   </f:entry>
   <f:entry title="ComposeTemplate" field="composeTemplate">
-    <f:textbox value="${it.composeTemplate}"/>
+    <f:textarea value="${it.composeTemplate}"/>
   </f:entry>
   <f:entry title="Host Credentials" field="credentialsId">
   	<c:select />
-  </f:entry>
-  <f:entry title="Publish Strategy" field="publishStrategy">
-    <f:select />
   </f:entry>
 </j:jelly>
