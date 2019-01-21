@@ -8,6 +8,7 @@ import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 import com.kaoyaya.jenkins.cd.cs.Client;
 import com.kaoyaya.jenkins.cd.cs.Project;
 import com.kaoyaya.jenkins.cd.utils.CredentialsListBoxModel;
+import com.kaoyaya.jenkins.cd.utils.Utils;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -39,7 +40,9 @@ public class DeployBuilder extends Builder implements SimpleBuildStep {
     private String endPoint;
     private String credentialsId;
     private String appName;
-    private String composeTemplate;
+    private int deployTime;
+
+    private static final int DEFAULT_DEPLOY_TIME = 10;
 
     @DataBoundConstructor
     public DeployBuilder() {
@@ -63,13 +66,13 @@ public class DeployBuilder extends Builder implements SimpleBuildStep {
         this.appName = appName;
     }
 
-    public String getComposeTemplate() {
-        return composeTemplate;
+    public int getDeployTime() {
+        return deployTime;
     }
 
     @DataBoundSetter
-    public void setComposeTemplate(String composeTemplate) {
-        this.composeTemplate = composeTemplate;
+    public void setDeployTime(int deployTime) {
+        this.deployTime = deployTime;
     }
 
     public String getCredentialsId() {
@@ -94,23 +97,34 @@ public class DeployBuilder extends Builder implements SimpleBuildStep {
     @Override
     public void perform(@Nonnull Run<?, ?> run, @Nonnull FilePath filePath, @Nonnull Launcher launcher, @Nonnull TaskListener taskListener) throws InterruptedException, IOException {
         Credentials credentials = lookupSystemCredentials(credentialsId);
-        String compose = this.composeTemplate;
         if (credentials instanceof DockerServerCredentials) {
             final DockerServerCredentials cert = (DockerServerCredentials) credentials;
             Client client = new Client(this.endPoint, cert.getServerCaCertificate(), cert.getClientCertificate(), cert.getClientKey());
             Project project = client.getProjectByName(this.appName);
             if (project.getName().isEmpty()) {
                 taskListener.getLogger().printf("应用 %s 不存在%n", this.appName);
+                return;
             }
-            if (this.composeTemplate.contains("$BUILD_NUMBER")) {
-                compose = this.composeTemplate.replace("$BUILD_NUMBER", Integer.toString(run.number));
-            }
-            boolean success = client.updateProjectByBlueGreen(this.appName, compose, Integer.toString(run.number),
-                    project.getDescription());
+            String newVersion = Integer.toString(run.number);
+            String newTemplate = new Utils().UpdateTemplateVersion(project.getTemplate(), newVersion);
+            taskListener.getLogger().println("开始蓝绿部署");
+            boolean success = client.updateProjectByBlueGreen(project.getName(), newTemplate, newVersion, project.getDescription());
             if (!success) {
                 taskListener.getLogger().println("蓝绿更新失败");
+                return;
             }
-            Thread.sleep(10000);
+            taskListener.getLogger().println("蓝绿更新成功");
+            int time = this.deployTime;
+            if (time == 0) {
+                time = DEFAULT_DEPLOY_TIME;
+            }
+            while (time > 0) {
+                time--;
+                Thread.sleep(1000);
+                int ss = time % 60;
+                taskListener.getLogger().println("确认蓝绿部署倒计时 " + ss + " 秒");
+            }
+            taskListener.getLogger().println("开始确认蓝绿部署");
             boolean deploySuccess = client.confirmUpdateProject(this.appName);
             if (deploySuccess) {
                 taskListener.getLogger().printf("应用 %s 部署成功%n", this.appName);

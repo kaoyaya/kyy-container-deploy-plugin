@@ -16,8 +16,8 @@
   <f:entry title="ApplicationName" field="appName">
     <f:textbox value="${it.appName}"/>
   </f:entry>
-  <f:entry title="ComposeTemplate" field="composeTemplate">
-    <f:textarea value="${it.composeTemplate}"/>
+  <f:entry title="DeployTime" field="deployTime">
+    <f:textarea value="${it.deployTime}"/>
   </f:entry>
   <f:entry title="Host Credentials" field="credentialsId">
   	<c:select />

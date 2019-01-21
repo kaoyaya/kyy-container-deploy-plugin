@@ -1,12 +1,14 @@
 package com.kaoyaya.jenkins.cd.cs;
 
 import com.alibaba.fastjson.JSON;
+import com.kaoyaya.jenkins.cd.utils.Utils;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class ClientTest {
@@ -31,14 +33,19 @@ public class ClientTest {
 
     @Test
     public void getProjectByName() {
-        System.out.println(client.getProjectByName(TEST_PROJECT_NAME));
+        Project project = client.getProjectByName(TEST_PROJECT_NAME);
+        String newVersion = Integer.toString(Integer.parseInt(project.getVersion()) + 1);
+        System.out.println(new Utils().UpdateTemplateVersion(project.getTemplate(), newVersion));
+        System.out.println(project);
     }
 
     @Test
     public void updateProjectByBlueGreen() {
         Project project = client.getProjectByName(TEST_PROJECT_NAME);
-        boolean success = client.updateProjectByBlueGreen(project.getName(), project.getTemplate(),
-                project.getVersion(), project.getDescription());
+        String newVersion = Integer.toString(Integer.parseInt(project.getVersion()) + 1);
+        boolean success = client.updateProjectByBlueGreen(project.getName(),
+                new Utils().UpdateTemplateVersion(project.getTemplate(), newVersion),
+                newVersion, project.getDescription());
         System.out.println(success);
     }
 
