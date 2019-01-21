@@ -1,3 +1,4 @@
+<?jelly escape-by-default='true'?>
 <div>
     (可选)蓝绿部署等待确认时间(秒)，默认10秒。
 </div>
