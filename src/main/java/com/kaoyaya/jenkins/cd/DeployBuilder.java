@@ -105,7 +105,8 @@ public class DeployBuilder extends Builder implements SimpleBuildStep {
             if (this.composeTemplate.contains("$BUILD_NUMBER")) {
                 compose = this.composeTemplate.replace("$BUILD_NUMBER", Integer.toString(run.number));
             }
-            boolean success = client.updateProjectByBlueGreen(this.appName, compose, Integer.toString(run.number));
+            boolean success = client.updateProjectByBlueGreen(this.appName, compose, Integer.toString(run.number),
+                    project.getDescription());
             if (!success) {
                 taskListener.getLogger().println("蓝绿更新失败");
             }

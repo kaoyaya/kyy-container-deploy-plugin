@@ -74,12 +74,13 @@ public class Client {
     }
 
     // 蓝绿部署
-    public boolean updateProjectByBlueGreen(String name, String template, String version) {
+    public boolean updateProjectByBlueGreen(String name, String template, String version, String description) {
         HashMap<String, Object> params = new HashMap<>();
         params.put("update_method", "blue-green");
         params.put("template", template);
         params.put("version", version);
         params.put("latest_image", true);
+        params.put("description", description);
         ReturnMsg returnMsg = this.post("/projects/" + name + "/update", params);
         return returnMsg.getCode().equals(Accepted);
     }

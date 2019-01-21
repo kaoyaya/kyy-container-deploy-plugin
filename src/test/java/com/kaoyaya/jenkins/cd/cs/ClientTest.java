@@ -37,7 +37,8 @@ public class ClientTest {
     @Test
     public void updateProjectByBlueGreen() {
         Project project = client.getProjectByName(TEST_PROJECT_NAME);
-        boolean success = client.updateProjectByBlueGreen(project.getName(), project.getTemplate(), project.getVersion());
+        boolean success = client.updateProjectByBlueGreen(project.getName(), project.getTemplate(),
+                project.getVersion(), project.getDescription());
         System.out.println(success);
     }
 
