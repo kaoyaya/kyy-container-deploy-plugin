@@ -102,7 +102,7 @@ public class DeployBuilder extends Builder implements SimpleBuildStep {
             Client client = new Client(this.endPoint, cert.getServerCaCertificate(), cert.getClientCertificate(), cert.getClientKey());
             Project project = client.getProjectByName(this.appName);
             if (project.getName().isEmpty()) {
-                taskListener.getLogger().printf("应用 %s 不存在%n", this.appName);
+                taskListener.fatalError("应用 " + this.appName + " 不存在");
                 return;
             }
             String newVersion = Integer.toString(run.number);
@@ -110,7 +110,7 @@ public class DeployBuilder extends Builder implements SimpleBuildStep {
             taskListener.getLogger().println("开始蓝绿部署");
             boolean success = client.updateProjectByBlueGreen(project.getName(), newTemplate, newVersion, project.getDescription());
             if (!success) {
-                taskListener.getLogger().println("蓝绿更新失败");
+                taskListener.fatalError("蓝绿更新失败");
                 return;
             }
             taskListener.getLogger().println("蓝绿更新成功");
@@ -129,8 +129,10 @@ public class DeployBuilder extends Builder implements SimpleBuildStep {
             if (deploySuccess) {
                 taskListener.getLogger().printf("应用 %s 部署成功%n", this.appName);
             } else {
-                taskListener.getLogger().printf("应用 %s 部署失败%n", this.appName);
+                taskListener.fatalError("应用 " + this.appName + " 部署失败");
             }
+        } else {
+            taskListener.fatalError("docker 证书错误");
         }
     }
 
